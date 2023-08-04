@@ -1,0 +1,25 @@
+{
+  "folders": [
+	{
+		"path": "../jest"
+	},
+	{
+		"path": "../type"
+	},
+	{
+		"path": "../../Downloads/Telegram Desktop/aiwa-online.uz/aiwa-online.uz"
+	},
+	{
+		"path": "../../Downloads/company_portfolio-main"
+	},
+	{
+		"path": "../asosback/backend"
+	},
+	{
+		"path": "."
+	}
+],
+  "settings": {
+    "liveServer.settings.multiRootWorkspaceName": "company_portfolio-main"
+  }
+}

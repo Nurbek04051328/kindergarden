@@ -9,6 +9,7 @@ router.use('/priceprod', require("./router/priceproduct"));
 router.use('/food', require("./router/food"));
 router.use('/time', require("./router/time"));
 router.use('/menu', require("./router/menu"));
+router.use('/home', require("./router/home"));
 
 
 

@@ -23,7 +23,7 @@ const all = async (req, res) => {
         }
     }
     times = await Time.find({...fil, userId:userFunction.id })
-        .sort({_id:-1})
+        .sort({order:1})
         .limit(quantity)
         .skip(next).lean();
     const count = await Time.find({...fil, userId:userFunction.id }).count();
@@ -58,10 +58,8 @@ const changeStatus = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-        let { title } = req.body;
         let userFunction = decoded(req,res)
-        console.log("userFunction", userFunction)
-        const time = await new Time({ userId:userFunction.id, title, createdTime:Date.now() });
+        const time = await new Time({ ...req.body,userId:userFunction.id,  createdTime:Date.now() });
         await time.validate();
         await time.save();
         let newTime = await Time.findOne({_id:time._id}).lean()
@@ -82,8 +80,8 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     if (req.body._id) {
-        let { _id, title } = req.body;
-        let time = await Time.findOneAndUpdate({_id:_id},{ title, updateTime:Date.now()}, {returnDocument: 'after'});
+        let { _id, title,order } = req.body;
+        let time = await Time.findOneAndUpdate({_id:_id},{ title,order, updateTime:Date.now()}, {returnDocument: 'after'});
         let saveTime = await Time.findOne({_id:time._id}).lean();
         res.status(200).json(saveTime);
     } else {

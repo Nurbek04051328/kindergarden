@@ -22,14 +22,15 @@ const all = async (req, res) => {
     let to = req.query.to || null
     let priceProducts = [];
     let fil = {};
+
     if (product) fil = {...fil, product};
     if (price) fil = {...fil, price};
     if (data) fil = {...fil, data: data};
-    if (from) fil = {...fil, createdTime: { $gte: from }}
-    if (to) fil = {...fil, createdTime: { $lte: to }}
+    if (from) fil = {...fil, data: { $gte: from }}
+    if (to) fil = {...fil, data: { $lte: to }}
     priceProducts = await PriceProduct.find({...fil, userId:userFunction.id })
         .populate(['product'])
-        .sort({_id:-1})
+        .sort({data:-1})
         .limit(quantity)
         .skip(next).lean();
     const count = await PriceProduct.find({...fil, userId:userFunction.id }).count();
@@ -124,7 +125,7 @@ const del = async(req,res)=>{
 
 const excell = async (req, res, next) => {
     try {
-
+        let userFunction = decoded(req,res)
         let product = req.query.product || null
         let price = req.query.price || null
         let from = req.query.from || null
@@ -138,7 +139,7 @@ const excell = async (req, res, next) => {
 
 
 
-        priceProducts = await PriceProduct.find( {...fil}).populate([ 'product' ]).sort({_id:-1}).lean()
+        priceProducts = await PriceProduct.find( {userId:userFunction.id, ...fil}).populate([ 'product' ]).sort({data:-1}).lean()
 
         // let count = await Book.find().select(['_id']).count()
         const workbook = new ExcelJs.Workbook()
@@ -147,6 +148,7 @@ const excell = async (req, res, next) => {
         worksheet.columns = [
             {header: 'N', key: 'id', width: 10},
             {header: 'Mahsulot nomi', key: 'product', width: 70},
+            {header: 'Birligi', key: 'productunit', width: 70},
             {header: 'Narxi', key: 'price', width: 70},
             {header: 'Sanasi', key: 'data', width: 70},
         ];
@@ -155,6 +157,7 @@ const excell = async (req, res, next) => {
                 worksheet.addRow({
                     id: index + 1,
                     product: priceproduct.product.title,
+                    productunit: priceproduct.product.unit,
                     price: priceproduct.price,
                     data: priceproduct.data,
 

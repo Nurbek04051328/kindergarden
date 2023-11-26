@@ -11,6 +11,7 @@ const all = async (req, res) => {
     let next = req.query.next || 1;
     next = (next-1)*quantity;
     let title = req.query.title || null;
+    let unit = req.query.unit || null;
     let products = [];
     let fil = {};
     let othername = kirilLotin.kirlot(title)
@@ -21,6 +22,9 @@ const all = async (req, res) => {
                 {'title': {$regex: new RegExp(othername.toLowerCase(), 'i')}},
             ]
         }
+    }
+    if (unit){
+        fil = {...fil, unit}
     }
     products = await Product.find({...fil, userId:userFunction.id })
         .sort({_id:-1})
@@ -71,7 +75,18 @@ const create = async (req, res) => {
     try {
         let { title, unit, img } = req.body;
         let userFunction = decoded(req,res)
-        console.log("userFunction", userFunction)
+        if (!img) {
+            let img = []
+            if (req.files){
+                let file = req.files.img
+                uniquePreffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+                filepath = `images/${uniquePreffix}_${file.name}`
+                await file.mv(filepath)
+                img = filepath, `images/${uniquePreffix}`
+
+            }
+        }
+
         const product = await new Product({ userId:userFunction.id, title, unit, img, createdTime:Date.now() });
         await product.validate();
         await product.save();
@@ -94,6 +109,15 @@ const create = async (req, res) => {
 const update = async (req, res) => {
     if (req.body._id) {
         let { _id, title, unit, img } = req.body;
+        if (!img && req.files){
+            let = img = []
+            let file = req.files.img
+            uniquePreffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+            filepath = `images/${uniquePreffix}_${file.name}`
+            await file.mv(filepath)
+            img = filepath, `images/${uniquePreffix}`
+
+        }
         let product = await Product.findOneAndUpdate({_id:_id},{ title, unit, img, updateTime:Date.now()}, {returnDocument: 'after'});
         let saveProduct = await Product.findOne({_id:product._id}).lean();
         res.status(200).json(saveProduct);

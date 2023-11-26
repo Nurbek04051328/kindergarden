@@ -24,6 +24,7 @@ const all = async (req, res) => {
         }
     }
     foods = await Food.find({...fil, userId:userFunction.id })
+        .populate(['products.id'])
         .sort({_id:-1})
         .limit(quantity)
         .skip(next).lean();
@@ -102,6 +103,17 @@ const findOne = async (req, res) => {
     }
 }
 
+const get_food = async (req, res) => {
+    if (req.params.id) {
+        // console.log('ku')
+        const _id = req.params.id;
+        let food = await Food.findOne({_id: _id}).populate(['products.id']).lean();
+        res.status(200).json(food);
+    } else {
+        res.status(400).json({message: "Id topilmadi"});
+    }
+}
+
 const del = async(req,res)=>{
     if (req.params.id) {
         let _id = req.params.id;
@@ -113,4 +125,4 @@ const del = async(req,res)=>{
 }
 
 
-module.exports = { all, allActive, changeStatus, create, update, findOne, del }
+module.exports = { all, allActive, changeStatus, create, update, findOne, del, get_food }

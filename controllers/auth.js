@@ -38,13 +38,11 @@ const register = async (req, res) => {
             res.status(500).send(error);
         }
     }
-
 }
 
 
 
 const login = async (req, res) => {
-    console.log(req.body)
     let {login, password} = req.body
     const user = await User.findOne({login})
     if (!user) {

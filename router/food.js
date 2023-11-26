@@ -1,7 +1,7 @@
 const Router = require("express");
 const router = new Router();
 const auth = require('../middleware/auth');
-const { all, allActive, changeStatus, create, update, findOne, del } = require('../controllers/food');
+const { all, allActive, changeStatus, create, update, get_food, findOne, del } = require('../controllers/food');
 
 
 router.get('/', auth,  all);
@@ -14,6 +14,7 @@ router.put('/', auth, update);
 
 router.get("/change/:id", auth, changeStatus);
 
+router.get("/more/:id", auth, get_food);
 router.get("/:id", auth, findOne);
 
 router.delete('/:id', auth,  del);
